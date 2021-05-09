@@ -9,8 +9,24 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        Text("Hello, world!")
-            .padding()
+        NavigationView {
+            Text("Hello, world!")
+                .padding()
+        }.onAppear{ self.makeAPIRequest() }
+    }
+    
+    func makeAPIRequest() {
+        DataService.shared.fetchGists { (result) in
+            switch result {
+            
+            case .success(let json):
+                print("API Data: \(json)")
+                
+            case .failure(let error):
+                print("API Error: \(error.localizedDescription)")
+                
+            }
+        }
     }
 }
 

@@ -13,6 +13,8 @@
 		BAA501C12648541800AF11A0 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BAA501C02648541800AF11A0 /* Preview Assets.xcassets */; };
 		BAA501CC2648541800AF11A0 /* ios_networkingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAA501CB2648541800AF11A0 /* ios_networkingTests.swift */; };
 		BAA501D72648541800AF11A0 /* ios_networkingUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAA501D62648541800AF11A0 /* ios_networkingUITests.swift */; };
+		BAA501E826485B8C00AF11A0 /* DataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAA501E726485B8C00AF11A0 /* DataService.swift */; };
+		BAA501ED2648704F00AF11A0 /* Gist.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAA501EC2648704F00AF11A0 /* Gist.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -45,6 +47,8 @@
 		BAA501D22648541800AF11A0 /* ios-networkingUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "ios-networkingUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BAA501D62648541800AF11A0 /* ios_networkingUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ios_networkingUITests.swift; sourceTree = "<group>"; };
 		BAA501D82648541800AF11A0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BAA501E726485B8C00AF11A0 /* DataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataService.swift; sourceTree = "<group>"; };
+		BAA501EC2648704F00AF11A0 /* Gist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Gist.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -100,6 +104,8 @@
 				BAA501BD2648541800AF11A0 /* Assets.xcassets */,
 				BAA501C22648541800AF11A0 /* Info.plist */,
 				BAA501BF2648541800AF11A0 /* Preview Content */,
+				BAA501E726485B8C00AF11A0 /* DataService.swift */,
+				BAA501EC2648704F00AF11A0 /* Gist.swift */,
 			);
 			path = "ios-networking";
 			sourceTree = "<group>";
@@ -259,6 +265,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BAA501ED2648704F00AF11A0 /* Gist.swift in Sources */,
+				BAA501E826485B8C00AF11A0 /* DataService.swift in Sources */,
 				BAA501BC2648541700AF11A0 /* ContentView.swift in Sources */,
 				BAA501BA2648541700AF11A0 /* ios_networkingApp.swift in Sources */,
 			);
