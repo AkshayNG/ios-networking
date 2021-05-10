@@ -34,7 +34,7 @@ class DataService {
         print(componentURL.url!)
     }
     
-    func fetchGists(completion:@escaping (Result<Any, Error>) -> Void) {
+    func fetchGists(completion:@escaping (Result<[Gist], Error>) -> Void) {
         
         var componentURL = URLComponents()
         componentURL.scheme = "https"
@@ -65,8 +65,13 @@ class DataService {
             }
             
             do {
-                let json = try JSONSerialization.jsonObject(with: validData, options: [])
-                completion(.success(json))
+                //To Get whole data as Json (Array/Dict)
+                //let json = try JSONSerialization.jsonObject(with: validData, options: [])
+
+                //Use of Codable model
+                let gists = try JSONDecoder().decode([Gist].self, from:validData)
+                
+                completion(.success(gists))
             } catch let serializationError {
                 completion(.failure(serializationError))
             }
