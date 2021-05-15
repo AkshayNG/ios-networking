@@ -7,8 +7,8 @@
 
 import Foundation
 
-enum DataError: Error {
-    case noData
+enum CustomError: Error {
+    case noData, badURL
 }
 
 class DataService {
@@ -34,15 +34,28 @@ class DataService {
         print(componentURL.url!)
     }
     
+    func url(withPath path: String) -> URL? {
+        var components = URLComponents()
+        components.scheme = "https"
+        components.host = "api.github.com"
+        components.path = path
+        return components.url
+    }
+    
+    func authorizationString() -> String {
+        //GitHub has discontinued password authentication to the API starting on November 13, 2020
+        let authString = "" //Username and pwd
+        var authStringBase64 = ""
+        if let authData = authString.data(using: .utf8) {
+            authStringBase64 = authData.base64EncodedString()
+        }
+        return authStringBase64
+    }
+    
     func fetchGists(completion:@escaping (Result<[Gist], Error>) -> Void) {
         
-        var componentURL = URLComponents()
-        componentURL.scheme = "https"
-        componentURL.host = "api.github.com"
-        componentURL.path = "/gists/public"
-        
-        guard let validURL = componentURL.url else {
-            print("Invalid URL!")
+        guard let validURL = url(withPath: "/gists/public") else {
+            completion(.failure(CustomError.badURL))
             return
         }
         
@@ -60,7 +73,7 @@ class DataService {
             }
             
             guard let validData = data else {
-                completion(.failure(DataError.noData))
+                completion(.failure(CustomError.noData))
                 return
             }
             
@@ -72,11 +85,82 @@ class DataService {
                 let gists = try JSONDecoder().decode([Gist].self, from:validData)
                 
                 completion(.success(gists))
+            } catch let decodingError {
+                completion(.failure(decodingError))
+            }
+            
+        }.resume()
+    }
+    
+    func createNewGist(completion:@escaping (Result<Any, Error>) -> Void) {
+ 
+        guard let validURL = url(withPath: "/gists") else {
+            completion(.failure(CustomError.badURL))
+            return
+        }
+        
+        var request = URLRequest.init(url: validURL)
+        request.httpMethod = "POST"
+        request.setValue("Basic \(authorizationString())", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        
+        let newGist = Gist.init(id: nil, isPublic: true, description: "A new gist", files: ["sample.txt": File.init(content: "Hello World!")])
+        
+        do {
+            let data = try JSONEncoder().encode(newGist)
+            request.httpBody = data
+        } catch let encodingError {
+            completion(.failure(encodingError))
+            return
+        }
+        
+        URLSession.shared.dataTask(with: request) { (data, response, error) in
+            if let httpResponse = response as? HTTPURLResponse {
+                print("API Status: \(httpResponse.statusCode)")
+            }
+            
+            guard error == nil else {
+                completion(.failure(error!))
+                return
+            }
+            
+            guard let validData = data else {
+                completion(.failure(CustomError.noData))
+                return
+            }
+            
+            do {
+                let json = try JSONSerialization.jsonObject(with: validData, options: [])
+                completion(.success(json))
             } catch let serializationError {
                 completion(.failure(serializationError))
             }
             
         }.resume()
         
+    }
+    
+    func starUnstartGist(id:String, star: Bool, completion:@escaping (Bool)->Void) {
+        guard let validURL =  url(withPath: "/gists/\(id)/star") else {
+            completion(false)
+            return
+        }
+        
+        var request = URLRequest.init(url: validURL)
+        request.httpMethod = star ? "PUT" : "DELETE"
+        request.setValue("0", forHTTPHeaderField: "Content-Length")
+        request.setValue("Basic \(authorizationString())", forHTTPHeaderField: "Authorization")
+        
+        URLSession.shared.dataTask(with: request) { (data, response, error) in
+            if let httpResponse = response as? HTTPURLResponse {
+                print("API Status: \(httpResponse.statusCode)")
+                if httpResponse.statusCode == 204 {
+                    completion(true)
+                } else {
+                    completion(false)
+                }
+            }
+        }
     }
 }

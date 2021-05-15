@@ -10,16 +10,18 @@ import SwiftUI
 struct ContentView: View {
     var body: some View {
         NavigationView {
-            Text("Hello, world!")
-                .padding()
+            Button("Create a Gist") {
+                createGist()
+            }
+            .padding()
         }.onAppear{
             self.testDataEncoding()
-            self.makeAPIRequest()
+            self.fetchGists()
         }
     }
     
     func testDataEncoding() {
-        let gist = Gist.init(id: nil, isPublic: true, description: "Hello World!")
+        let gist = Gist.init(id: nil, isPublic: true, description: "Hello World!", files: nil)
         do {
             let gistData = try JSONEncoder().encode(gist)
             let gistString = String(data: gistData, encoding: .utf8)
@@ -29,16 +31,26 @@ struct ContentView: View {
         }
     }
     
-    func makeAPIRequest() {
+    func fetchGists() {
         DataService.shared.fetchGists { (result) in
             switch result {
-            
             case .success(let gists):
                 gists.forEach { print("\($0) \n") }
                 
             case .failure(let error):
-                print("API Error: \(error.localizedDescription)")
+                print("API Error: \(error)")
+            }
+        }
+    }
+    
+    func createGist() {
+        DataService.shared.createNewGist { (result) in
+            switch result {
+            case .success(let json):
+                print(json)
                 
+            case .failure(let error):
+                print("API Error: \(error)")
             }
         }
     }
